@@ -1,0 +1,2 @@
+clear
+docker run -it -v $PWD:/root rockywei/swift:3.1 /bin/bash -c "cd /root;swift test --build-path=.build_lin"

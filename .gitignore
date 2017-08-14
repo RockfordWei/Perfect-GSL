@@ -1,0 +1,6 @@
+.DS_Store
+/.buil*
+/.bash*
+/Packages
+/*.xcodeproj
+/*.pins
