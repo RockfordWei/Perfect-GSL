@@ -3,6 +3,7 @@ import Foundation
 
 public enum GSLErrors: Error {
   case InvalidFilePointer
+  case InvalidShape
 }
 
 open class GSLMatrix: Equatable, CustomStringConvertible {
@@ -19,6 +20,31 @@ open class GSLMatrix: Equatable, CustomStringConvertible {
 
   public var columns: Int {
     return self.reference.pointee.size2
+  }
+
+  public init (array: [[Double]]) throws {
+    guard array.count > 0,
+      array[0].count > 0
+    else { throw GSLErrors.InvalidShape }
+
+    reference = gsl_matrix_alloc(array.count, array[0].count)
+    for i in 0 ..< self.rows {
+      for j in 0 ..< self.columns {
+        self.set(i, j, value: array[i][j])
+      }
+    }
+  }
+
+  public var value: [[Double]] {
+    var v:[[Double]] = []
+    for i in 0 ..< self.rows {
+      var u:[Double] = []
+      for j in 0 ..< self.columns {
+        u.append(self.get(i, j))
+      }
+      v.append(u)
+    }
+    return v
   }
 
   public init(rows: Int, columns: Int, data: String? = nil) {

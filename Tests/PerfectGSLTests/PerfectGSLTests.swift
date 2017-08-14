@@ -32,6 +32,21 @@ class PerfectGSLTests: XCTestCase {
     XCTAssertEqual(m, n)
   }
 
+  func testConvertion() {
+    let a:[[Double]] = [[0,1,2],[3,4,5]]
+    do {
+      let m = try GSLMatrix(array: a)
+      let b = m.value
+      for i in 0 ..< 2 {
+        let x = a[i]
+        let y = b[i]
+        XCTAssertEqual(x, y)
+      }
+    }catch {
+      XCTFail(error.localizedDescription)
+    }
+  }
+
   func testExportImport() {
     let x = "0\n1\n2\n3\n4\n5\n"
     let m = GSLMatrix(rows: 2, columns: 3, data: x)
@@ -53,6 +68,7 @@ class PerfectGSLTests: XCTestCase {
     ("testInit", testInit),
     ("testGetSet", testGetSet),
     ("testStrings", testStrings),
+    ("testConvertion", testConvertion),
     ("testExportImport", testExportImport)
     ]
 }
