@@ -64,11 +64,44 @@ class PerfectGSLTests: XCTestCase {
     }
   }
 
+  func testIdentity() {
+    let sz = 128
+    let m = GSLMatrix(rows: sz, columns: sz)
+    m.setAllElements()
+    m.setToIdentity()
+    for i in 0..<sz {
+      for j in 0..<sz {
+        let n = m.get(i, j)
+        if i == j {
+          XCTAssertEqual(n, 1)
+        } else {
+          XCTAssertEqual(n, 0)
+        }
+      }
+    }
+  }
+
+  func testSwap() {
+    let sz = 128
+    let m = GSLMatrix(rows: sz, columns: sz)
+    let n = GSLMatrix(rows: sz, columns: sz)
+    m.setAllElements(toValue: 1)
+    n.setAllElements(toValue: 2)
+    _ = GSLMatrix.Swap(m, n)
+    for i in 0 ..< sz {
+      for j in 0 ..< sz {
+        XCTAssertEqual(m.get(i, j), 2)
+        XCTAssertEqual(n.get(i, j), 1)
+      }
+    }
+  }
   static var allTests = [
     ("testInit", testInit),
     ("testGetSet", testGetSet),
     ("testStrings", testStrings),
     ("testConvertion", testConvertion),
+    ("testIdentity", testIdentity),
+    ("testSwap", testSwap),
     ("testExportImport", testExportImport)
     ]
 }

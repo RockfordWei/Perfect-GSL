@@ -10,8 +10,92 @@ open class GSLMatrix: Equatable, CustomStringConvertible {
 
   let reference: UnsafeMutablePointer<gsl_matrix>
 
+  public static func += (m: GSLMatrix, n: GSLMatrix) -> GSLMatrix {
+    _ = gsl_matrix_add(m.reference, n.reference)
+    return m
+  }
+
+  public static func + (m: GSLMatrix, n: GSLMatrix) -> GSLMatrix {
+    let p = m.copy
+    return p += n
+  }
+
+  public static func += (m: GSLMatrix, x: Double) -> GSLMatrix {
+    _ = gsl_matrix_add_constant(m.reference, x)
+    return m
+  }
+
+  public static func + (m: GSLMatrix, x: Double) -> GSLMatrix {
+    let n = m.copy
+    return n += x
+  }
+
+  public static func + (x: Double, m: GSLMatrix) -> GSLMatrix {
+    return m + x
+  }
+
+  public static func -= (m: GSLMatrix, n: GSLMatrix) -> GSLMatrix {
+    _ = gsl_matrix_sub(m.reference, n.reference)
+    return m
+  }
+
+  public static func - (m: GSLMatrix, n: GSLMatrix) -> GSLMatrix {
+    let p = m.copy
+    return p -= n
+  }
+
+  public static func -= (m: GSLMatrix, x: Double) -> GSLMatrix {
+    return m += (-x)
+  }
+
+  public static func - (m: GSLMatrix, x: Double) -> GSLMatrix {
+    return m + (-x)
+  }
+
+  public static func - (x:Double, m: GSLMatrix) -> GSLMatrix {
+    return x + (-1.0 * m)
+  }
+
+  public static func *= (m: GSLMatrix, x: Double) -> GSLMatrix {
+    _ = gsl_matrix_scale(m.reference, x)
+    return m
+  }
+
+  public static func * (m: GSLMatrix, x: Double) -> GSLMatrix {
+    let n = m.copy
+    return n *= x
+  }
+
+  public static func * (x: Double, m: GSLMatrix) -> GSLMatrix {
+    return m * x
+  }
+
+  public static func *= (m: GSLMatrix, n: GSLMatrix) -> GSLMatrix {
+    _ = gsl_matrix_mul_elements(m.reference, n.reference)
+    return m
+  }
+
+  public static func * (m: GSLMatrix, n: GSLMatrix) -> GSLMatrix {
+    let p = m.copy
+    return p *= n
+  }
+
+  public static func /= (m: GSLMatrix, n: GSLMatrix) -> GSLMatrix {
+    _ = gsl_matrix_div_elements(m.reference, n.reference)
+    return m
+  }
+
+  public static func / (m: GSLMatrix, n: GSLMatrix) -> GSLMatrix {
+    let p = m.copy
+    return p /= n
+  }
+
   public static func == (m: GSLMatrix, n: GSLMatrix) -> Bool {
     return 0 != gsl_matrix_equal(m.reference, n.reference)
+  }
+
+  public static func Swap(_ m: GSLMatrix, _ n: GSLMatrix) -> Int {
+    return Int(gsl_matrix_swap(m.reference, n.reference))
   }
 
   public var rows : Int {
@@ -33,6 +117,12 @@ open class GSLMatrix: Equatable, CustomStringConvertible {
         self.set(i, j, value: array[i][j])
       }
     }
+  }
+
+  public var copy: GSLMatrix {
+    let c = GSLMatrix(rows: self.rows, columns: self.columns)
+    _ = gsl_matrix_memcpy(c.reference, self.reference)
+    return c
   }
 
   public var value: [[Double]] {
@@ -132,6 +222,18 @@ open class GSLMatrix: Equatable, CustomStringConvertible {
 
   public func `set`(_ i: Int, _ j: Int, value: Double) {
       gsl_matrix_set(reference, i, j, value)
+  }
+
+  public func setAllElements(toValue: Double = 0) {
+    if toValue == 0 {
+      gsl_matrix_set_zero(reference)
+    } else {
+      gsl_matrix_set_all(reference, toValue)
+    }
+  }
+
+  public func setToIdentity() {
+    gsl_matrix_set_identity(reference)
   }
 
   public var isNull: Bool {
