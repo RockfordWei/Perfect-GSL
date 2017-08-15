@@ -6,6 +6,19 @@ public enum GSLErrors: Error {
   case InvalidShape
 }
 
+public extension gsl_vector_view {
+  public var array: [Double] {
+    guard self.vector.size > 0 else { return [] }
+    var v: [Double] = []
+    var u = self.vector
+    for i in 0 ..< self.vector.size {
+      let x = gsl_vector_get(&u, i)
+      v.append(x)
+    }
+    return v
+  }
+}
+
 open class GSLMatrix: Equatable, CustomStringConvertible {
 
   let reference: UnsafeMutablePointer<gsl_matrix>
@@ -96,6 +109,11 @@ open class GSLMatrix: Equatable, CustomStringConvertible {
 
   public static func Swap(_ m: GSLMatrix, _ n: GSLMatrix) -> Int {
     return Int(gsl_matrix_swap(m.reference, n.reference))
+  }
+
+  public var diagonal: [Double] {
+    let a = gsl_matrix_diagonal(reference)
+    return a.array
   }
 
   public var rows : Int {

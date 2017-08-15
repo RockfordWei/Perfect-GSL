@@ -95,6 +95,26 @@ class PerfectGSLTests: XCTestCase {
       }
     }
   }
+
+  func testComputation() {
+    let x = "0\n1\n2\n3\n4\n5\n"
+    let m = GSLMatrix(rows: 2, columns: 3, data: x)
+    let m2 = m * 2
+    XCTAssertEqual(m2.description, "0\n2\n4\n6\n8\n10\n")
+    let m3 = m2 - m
+    XCTAssertEqual(m3, m)
+    XCTAssertEqual(m3 + m, m2)
+    let m4 = GSLMatrix(rows: 3, columns: 3)
+    m4.setAllElements(toValue: 2.0)
+    let m5 = GSLMatrix(rows: 3, columns: 3)
+    m5.setToIdentity()
+    let m6 = m4 * m5
+    let m7 = m5 * 2
+    XCTAssertEqual(m6, m7)
+    let m8 = m7 / m5
+    XCTAssertEqual(m7.diagonal, m8.diagonal)
+  }
+
   static var allTests = [
     ("testInit", testInit),
     ("testGetSet", testGetSet),
@@ -102,6 +122,7 @@ class PerfectGSLTests: XCTestCase {
     ("testConvertion", testConvertion),
     ("testIdentity", testIdentity),
     ("testSwap", testSwap),
+    ("testComputation", testComputation),
     ("testExportImport", testExportImport)
     ]
 }
