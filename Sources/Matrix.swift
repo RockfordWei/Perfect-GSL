@@ -1,11 +1,6 @@
 import GSLApi
 import Foundation
 
-public enum GSLErrors: Error {
-  case InvalidFilePointer
-  case InvalidShape
-}
-
 public extension gsl_vector_view {
   public var array: [Double] {
     guard self.vector.size > 0 else { return [] }

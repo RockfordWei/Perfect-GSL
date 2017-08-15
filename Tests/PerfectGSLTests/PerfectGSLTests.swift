@@ -10,6 +10,14 @@ class PerfectGSLTests: XCTestCase {
     XCTAssertFalse(m.isPos)
   }
 
+  func testInitV() {
+    let v = GSLVector(size: 3)
+    XCTAssertTrue(v.isNull)
+    XCTAssertTrue(v.isNonneg)
+    XCTAssertFalse(v.isNeg)
+    XCTAssertFalse(v.isPos)
+  }
+
   func testGetSet() {
     let m = GSLMatrix(rows: 2, columns: 3)
     for i in 0 ..< 2 {
@@ -21,6 +29,25 @@ class PerfectGSLTests: XCTestCase {
         XCTAssertEqual(x, y)
       }
     }
+  }
+
+  func testGetSetV() {
+    let v = GSLVector(size: 6)
+    for j in 0 ..< v.size {
+      v.set(j, value: Double(j))
+    }
+    for (i, w) in v.value.enumerated() {
+      XCTAssertEqual(i, Int(w))
+    }
+  }
+
+  func testStringsV() {
+    let x = "0\n1\n2\n3\n4\n5\n"
+    let v = GSLVector(size: 6, data: x)
+    let y = v.description
+    XCTAssertEqual(x, y)
+    let w = GSLVector(size: 6, data: y)
+    XCTAssertEqual(v, w)
   }
 
   func testStrings() {
@@ -64,6 +91,21 @@ class PerfectGSLTests: XCTestCase {
     }
   }
 
+  func testExportImportV() {
+    let x = "0\n1\n2\n3\n4\n5\n"
+    let v = GSLVector(size: 6, data: x)
+    let w = GSLVector(size: 6)
+    let tmp = "/tmp/gslvector.dat"
+    do {
+      try v.export(path: tmp)
+      try w.import(path: tmp)
+      XCTAssertEqual(v, w)
+      XCTAssertEqual(x, w.description)
+    }catch {
+      XCTFail(error.localizedDescription)
+    }
+  }
+
   func testIdentity() {
     let sz = 128
     let m = GSLMatrix(rows: sz, columns: sz)
@@ -96,6 +138,16 @@ class PerfectGSLTests: XCTestCase {
     }
   }
 
+  func testSwapV() {
+    let x = "0\n1\n2\n3\n4\n5\n"
+    let y = "0\n2\n4\n6\n8\n10\n"
+    let v = GSLVector(size: 6, data: x)
+    let w = GSLVector(size: 6, data: y)
+    GSLVector.Swap(v: v, w: w)
+    XCTAssertEqual(x, w.description)
+    XCTAssertEqual(y, v.description)
+  }
+
   func testComputation() {
     let x = "0\n1\n2\n3\n4\n5\n"
     let m = GSLMatrix(rows: 2, columns: 3, data: x)
@@ -117,12 +169,17 @@ class PerfectGSLTests: XCTestCase {
 
   static var allTests = [
     ("testInit", testInit),
+    ("testInitV", testInitV),
     ("testGetSet", testGetSet),
+    ("testGetSetV", testGetSetV),
     ("testStrings", testStrings),
+    ("testStringsV", testStringsV),
     ("testConvertion", testConvertion),
     ("testIdentity", testIdentity),
     ("testSwap", testSwap),
+    ("testSwapV", testSwapV),
     ("testComputation", testComputation),
+    ("testExportImportV", testExportImportV),
     ("testExportImport", testExportImport)
     ]
 }
