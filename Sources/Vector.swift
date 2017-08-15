@@ -8,6 +8,96 @@ open class GSLVector: Equatable, CustomStringConvertible {
     return 1 == gsl_vector_equal(l.reference, r.reference)
   }
 
+  public static func *= (l: GSLVector, r: GSLVector) -> GSLVector {
+    _ = gsl_vector_mul(l.reference, r.reference)
+    return l
+  }
+
+  public static func * (l: GSLVector, r: GSLVector) -> GSLVector {
+    let v = l.copy
+    return v *= r
+  }
+
+  public static func *= (l:GSLVector, r: Double) -> GSLVector {
+    _ = gsl_vector_scale(l.reference, r)
+    return l
+  }
+
+  public static func * (l: GSLVector, r: Double) -> GSLVector {
+    let v = l.copy
+    return v *= r
+  }
+
+  public static func * (l: Double, r: GSLVector) -> GSLVector {
+    return r * l
+  }
+
+  public static func /= (l: GSLVector, r: GSLVector) -> GSLVector {
+    _ = gsl_vector_div(l.reference, r.reference)
+    return l
+  }
+
+  public static func / (l: GSLVector, r: GSLVector) -> GSLVector {
+    return l.copy /= r
+  }
+
+  public static func /= (l: GSLVector, r: Double) -> GSLVector {
+    return l *= ( 1.0 / r )
+  }
+
+  public static func / (l: GSLVector, r: Double) -> GSLVector {
+    return l.copy /= r
+  }
+  
+  public static func += (l: GSLVector, r: GSLVector) -> GSLVector {
+    _ = gsl_vector_add(l.reference, r.reference)
+    return l
+  }
+
+  public static func + (l: GSLVector, r: GSLVector) -> GSLVector {
+    let v = l.copy
+    return v += r
+  }
+
+  public static func += (l: GSLVector, r: Double) -> GSLVector {
+    _ = gsl_vector_add_constant(l.reference, r)
+    return l
+  }
+
+  public static func + (l: GSLVector, r: Double) -> GSLVector {
+    return l.copy += r
+  }
+
+  public static func + (l: Double, r: GSLVector) -> GSLVector {
+    return r + l
+  }
+
+  public static func -= (l: GSLVector, r: GSLVector) -> GSLVector {
+    _ = gsl_vector_sub(l.reference, r.reference)
+    return l
+  }
+
+  public static func - (l: GSLVector, r: GSLVector) -> GSLVector {
+    let v = l.copy
+    return v -= r
+  }
+
+  public static func -= (l: GSLVector, r: Double) -> GSLVector {
+    return l += (-r)
+  }
+
+  public static func -= (l: Double, r: GSLVector) -> GSLVector {
+    return r.copy * (-0.1) + l
+  }
+
+  public static func - (l: GSLVector, r: Double) -> GSLVector {
+    return l.copy -= r
+  }
+
+  public static func - (l: Double, r: GSLVector) -> GSLVector {
+    return l -= r
+  }
+
   public static func Swap(v: GSLVector, w: GSLVector) {
     _ = gsl_vector_swap(v.reference, w.reference)
   }
@@ -135,6 +225,18 @@ open class GSLVector: Equatable, CustomStringConvertible {
 
   public func `set`(_ index: Int, value: Double) {
     gsl_vector_set(reference, index, value)
+  }
+
+  public func setAllElements(toValue: Double = 0) {
+    if toValue == 0 {
+      gsl_vector_set_zero(reference)
+    } else {
+      gsl_vector_set_all(reference, toValue)
+    }
+  }
+
+  public func setBasis(_ index: Int) -> Int {
+    return Int(gsl_vector_set_basis(reference, index))
   }
 
   deinit {

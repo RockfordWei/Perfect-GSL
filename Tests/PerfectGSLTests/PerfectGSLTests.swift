@@ -123,6 +123,16 @@ class PerfectGSLTests: XCTestCase {
     }
   }
 
+  func testBasis() {
+    let a = GSLVector(size: 256)
+    a.setAllElements(toValue: 2)
+    let b = GSLVector(size: 256)
+    b.setAllElements()
+    b.set(128, value: 1)
+    _ = a.setBasis(128)
+    XCTAssertEqual(a, b)
+  }
+
   func testSwap() {
     let sz = 128
     let m = GSLMatrix(rows: sz, columns: sz)
@@ -146,6 +156,25 @@ class PerfectGSLTests: XCTestCase {
     GSLVector.Swap(v: v, w: w)
     XCTAssertEqual(x, w.description)
     XCTAssertEqual(y, v.description)
+  }
+
+  func testComputationV() {
+    let x = "0\n1\n2\n3\n4\n5\n"
+    let v = GSLVector(size: 6, data: x)
+    let w = v * 2
+    let u = v + v
+    let y = v * u
+    for (i, j) in y.value.enumerated() {
+      XCTAssertEqual(i * (i * 2), Int(j))
+    }
+
+    let z = y / u
+    XCTAssertEqual(u, w)
+    var m = v.value
+    m.remove(at: 0)
+    var n = z.value
+    n.remove(at: 0)
+    XCTAssertEqual(m, n)
   }
 
   func testComputation() {
@@ -176,9 +205,11 @@ class PerfectGSLTests: XCTestCase {
     ("testStringsV", testStringsV),
     ("testConvertion", testConvertion),
     ("testIdentity", testIdentity),
+    ("testBasis", testBasis),
     ("testSwap", testSwap),
     ("testSwapV", testSwapV),
     ("testComputation", testComputation),
+    ("testComputationV", testComputationV),
     ("testExportImportV", testExportImportV),
     ("testExportImport", testExportImport)
     ]
